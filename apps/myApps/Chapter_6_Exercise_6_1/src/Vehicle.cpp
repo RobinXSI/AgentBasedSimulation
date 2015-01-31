@@ -6,7 +6,7 @@ void Vehicle::setup(){
     velocity.set(0, -2);
     acceleration.set(0, 0);
     r = 6;
-    maxSpeed = 10;
+    maxSpeed = 4;
     maxForce = 0.4;
 }
 
@@ -27,17 +27,18 @@ void Vehicle::applyForce(const ofVec2f & force) {
 
 void Vehicle::seek(const ofVec2f & target) {
     ofVec2f desired = target - location;  // A vector pointing from the location to the target
-    steer(target, desired);
+    steer(desired);
 }
 
 // Exercise 6.1
 void Vehicle::flew(const ofVec2f & target) {
     ofVec2f desired = -(target - location);  // A vector pointing from the location to the target
-    steer(target, desired);
+    steer(desired);
 }
 
 // Exercise 6.2
 void Vehicle::pursuit(const ofVec2f & target) {
+    // Calculate Future Position of Target
     auto targetActualPosition = ofVec2f(target.x, target.y);
     auto targetMovement = targetActualPosition - targetLastLocation;
     auto targetMovementNormalized = targetMovement.normalize();
@@ -45,13 +46,28 @@ void Vehicle::pursuit(const ofVec2f & target) {
     auto vehicleCarDistance = vehicleCarDistanceVector.length();
     auto futureMovement = targetMovementNormalized * vehicleCarDistance;
     auto futurePosition = vehicleCarDistanceVector + futureMovement;
-    steer(target, futurePosition);
+    steer(futurePosition);
     targetLastLocation = targetActualPosition;
 }
 
 
+void Vehicle::arrive(const ofVec2f & target) {
+    auto desired = target - location;
+    auto d = desired.length();
+    if(d < 100) {
+        auto m = ofMap(d, 0, 100, 0, maxSpeed);
+        desired.scale(m);
+    } else {
+        desired.scale(maxSpeed);
+    }
+    
+    auto steer = desired - velocity;
+    steer.limit(maxForce);
+    applyForce(steer);
+}
 
-void Vehicle::steer(const ofVec2f & target, ofVec2f desired) {
+
+void Vehicle::steer(ofVec2f desired) {
     // Normalize desired and scale to maximum speed
     desired.normalize();
     desired *= maxSpeed;
@@ -61,10 +77,6 @@ void Vehicle::steer(const ofVec2f & target, ofVec2f desired) {
     
     applyForce(steer);
 }
-
-
-
-
 
 
 void Vehicle::draw(){

@@ -14,7 +14,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    v.pursuit(ofVec2f(mouseX, mouseY));
+    //v.pursuit(ofVec2f(mouseX, mouseY));
+    v.arrive(ofVec2f(mouseX, mouseY));
+
     v.update();
 }
 

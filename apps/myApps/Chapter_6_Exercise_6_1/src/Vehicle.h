@@ -14,7 +14,7 @@ private:
     float maxSpeed;
     ofVec2f targetLastLocation;
     
-    void steer(const ofVec2f & force, ofVec2f desired);
+    void steer(ofVec2f desired);
 public:
     void setup();
     void update();
@@ -22,6 +22,7 @@ public:
     void seek(const ofVec2f & target);
     void flew(const ofVec2f & target);
     void pursuit(const ofVec2f & target);
+    void arrive(const ofVec2f & target);
     void draw();
     void setLocation(float x, float y);
     void setVelocity(float x, float y);
